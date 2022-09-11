@@ -54,31 +54,27 @@ def deflection(x,t):
 
 # Graphing 
 import matplotlib.pyplot as plt 
-try:
-    import IPython
-    shell = IPython.get_ipython()
-    shell.enable_matplotlib(gui='inline') #to plot in different window change 'inline' to 'qt5'
-except:
-    print('Unable to open plotting window')  
+
 fig, ax = plt.subplots() # Matplotlibism for initialising
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 
 # Slow motion graphic of beam vibration
-def beam_vib_plot():
+def beam_vibration_plot():
     for tt in time_vec:
-        plt.ylim(-L/2, L/2)
+        plt.ylim(-L, L)
         y_vec = deflection(bar_vec,tt)
         displacement = plt.plot(bar_vec, y_vec, color='blue', linestyle='dashed')[0]
         brace = plt.plot((0,0,a),(0,-a,0),color='black', linestyle='solid')[0]
         plt.title(f'Deflection at {tt:.3f} seconds')
-        # ax.set_title()
+        ax.set_ylabel('Vertical displacement [mm]')
+        # ax.legend(handles=[displacement, brace])
         plt.show() # Matplotlibism for displaying plot 
     pass
 
 # Attempt at calculating first and second derivatives for the very last point (the end)
 # Second derivative = 0   
-# This is because after the brace, the bending is linear-dominated
+# This is because after the brace, the shape of the beam resembles a straight line
 # Need to calculate first and second derivative at every point 
 
 # First and second derivatives for calculation of strain 
@@ -134,11 +130,22 @@ def sigma_impact(strain,strain_rate):
     return strain_term*strain_rate_term
 
 conservative_sigma_impact = sigma_impact(max_strain,max_strain_rate)
-def conservative_sigma():
+def impact_equivalent_beam_stress():
     print(f'The equivalent stress due to impact loadcase is {conservative_sigma_impact:.2f} MPa')
     pass     
 
-    
+
+# Python initialisation 
+if __name__ == '__main__':
+    scripts = (beam_vibration_plot,impact_equivalent_beam_stress)
+    for script in scripts:
+        input(f'Press `Enter` to run {script.__name__} ')
+
+        plt.close('all')  
+        script()
+        plt.show(block=False)   
+
+    # input('Press `Enter` to quit the program.')    
 
 
 

@@ -5,10 +5,17 @@ For graphing the deformation and strain for individual truss elements for squat 
 
 
 import numpy as np
+import matplotlib.pyplot as plt
+try:
+    import IPython
+    shell = IPython.get_ipython()
+    shell.enable_matplotlib(gui='inline') #to plot in different window change 'inline' to 'qt5'
+except:
+    print('Unable to open plotting window')  
 
 # Global parameters
 E = 200e9 #Pa, Young's modulus of steel (generic)
-I = 4.7e-7 #m4, second moment of area
+I = 4.7e-7 #m4, second moment of area (hard-coded input)
 sigma_y = 80e6 #Pa
 y_half = 0.065/2 #half the thickness of SHS member, m
 mass = 200 #kg
@@ -52,9 +59,7 @@ def max_deflection(x):
 def deflection(x,t):
     return max_deflection(x)*np.sin(2*np.pi*omega_n*t)
 
-# Graphing 
-import matplotlib.pyplot as plt 
-
+# Graphing
 fig, ax = plt.subplots() # Matplotlibism for initialising
 ax.set_xlabel('x')
 ax.set_ylabel('y')

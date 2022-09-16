@@ -5,19 +5,20 @@ For graphing the deformation and strain for individual truss elements for squat 
 
 
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt 
+
 try:
-    import IPython
-    shell = IPython.get_ipython()
-    shell.enable_matplotlib(gui='inline') #to plot in different window change 'inline' to 'qt5'
-except:
-    print('Unable to open plotting window')  
+    from cross_sections_calc import calc
+except: 
+    raise Exception('Error importing required module for calculating second moment of area')
 
 # Global parameters
+t = 0.003 #m
+a = 0.065 #m
+b = 0.065 #m
+I = calc('shs',a,b,t)
 E = 200e9 #Pa, Young's modulus of steel (generic)
-I = 4.7e-7 #m4, second moment of area (hard-coded input)
-sigma_y = 80e6 #Pa
-y_half = 0.065/2 #half the thickness of SHS member, m
+y_half = b/2 #half the thickness of SHS member, m
 mass = 200 #kg
 impact_height = 0.7 #m
 a_gravity = 9.81 #m/s2

@@ -52,7 +52,8 @@ omega_n = np.sqrt(1/(mass*K_end)) #undamped natural frequency with weight
 num_x = 100
 dx = L/(num_x-1)
 bar_vec = np.linspace(0,L,num_x)
-time_vec = np.linspace(0,(1/omega_n),20)
+time_num = 200
+time_vec = np.linspace(0,(0.25/omega_n),time_num)
 
 # Function for defining deflection 
 def max_deflection(x):
@@ -78,7 +79,7 @@ def beam_vibration_plot():
         plt.show() # Matplotlibism for displaying plot 
     pass
 
-# Attempt at calculating first and second derivatives for the very last point (the end)
+# Attempt at calculating first and second derivatives for the very last point (the end) \
 # Second derivative = 0   
 # This is because after the brace, the shape of the beam resembles a straight line
 # Need to calculate first and second derivative at every point 
@@ -116,34 +117,59 @@ for i in range(num_x):
 first_div_vec = first_mat @ max_deflection(bar_vec)
 second_div_vec = second_mat @ max_deflection(bar_vec)
 
-def inverse_rho(first_derivative_vector,second_derivative_vector):
-    return second_derivative_vector/((1+first_derivative_vector**2)**1.5)
+def first_div_plot(t):
+    return first_mat @ deflection(bar_vec,t)
 
-inverse_rho_bar = inverse_rho(first_div_vec,second_div_vec)
+def second_div_plot(t):
+    return second_mat @ deflection(bar_vec,t)
+
+def reciprocal_rho_approx(t):
+    return second_div_plot(t)
+
+def strain(recip_rho):
+    return recip_rho*y_half
+
+# def strain_rate()
 
 def real_deriv_plot():
-    first_derivative_plot = plt.plot(bar_vec, first_div_vec, color='green', linestyle='dashed')[0]
-    second_derivative_plot = plt.plot(bar_vec, second_div_vec, color='red', linestyle='dashed')[0]
-    rho_plot = plt.plot(bar_vec, inverse_rho_bar, color='blue', linestyle='dashed')[0]
-    plt.show() # Matplotlibism for displaying plot 
+    
+    # first_derivative_plot = plt.plot(bar_vec, first_div_vec, color='green', linestyle='dashed')[0]
+    # second_derivative_plot = plt.plot(bar_vec, second_div_vec, color='red', linestyle='dashed')[0]
+    # rho_plot = plt.plot(bar_vec, inverse_rho_bar, color='blue', linestyle='dashed')[0]
+    # plt.show() # Matplotlibism for displaying plot 
+    
+    for tt in time_vec:
+        plt.ylim(-1, 1)
+        first_vec = first_div_plot(tt)
+        second_vec = second_div_plot(tt)
+        rho_vec = reciprocal_rho_approx(tt)
+        first_vec_plot = plt.plot(bar_vec, first_vec, color='blue', linestyle='dashed')[0]
+        second_vec_plot = plt.plot(bar_vec, second_vec, color='red', linestyle='dashed')[0]
+        reciprocal_rho_plot = plt.plot(bar_vec, rho_vec, color='black', linestyle='dashed')[0]
+        plt.title('First and second derivatives')
+        ax.set_ylabel('Arbitrary')
+        plt.show() # Matplotlibism for displaying plot 
+
     pass
-max_strain = max(abs(inverse_rho_bar))*y_half
-max_strain_rate = max_strain*2*np.pi*omega_n
+
+
+# max_strain = max(abs(inverse_rho_bar))*y_half
+# max_strain_rate = max_strain*2*np.pi*omega_n
 
 def sigma_impact(strain,strain_rate):
     strain_term = 50.103 + 176.09*strain**0.518
     strain_rate_term = 1+0.095*np.log(strain_rate)
     return strain_term*strain_rate_term
 
-conservative_sigma_impact = sigma_impact(max_strain,max_strain_rate)
-def impact_equivalent_beam_stress():
-    print(f'The equivalent stress due to impact loadcase is {conservative_sigma_impact:.2f} MPa')
-    pass     
+# # conservative_sigma_impact = sigma_impact(max_strain,max_strain_rate)
+# def impact_equivalent_beam_stress():
+#     print(f'The equivalent stress due to impact loadcase is {conservative_sigma_impact:.2f} MPa')
+#     pass     
 
 
 # Python initialisation 
 if __name__ == '__main__':
-    scripts = (beam_vibration_plot,impact_equivalent_beam_stress)
+    scripts = (beam_vibration_plot,real_deriv_plot)
     for script in scripts:
         input(f'Press `Enter` to run {script.__name__} ')
 

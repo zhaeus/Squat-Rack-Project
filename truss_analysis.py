@@ -6,6 +6,8 @@ For graphing the deformation and strain for individual truss elements for squat 
 
 import numpy as np
 import matplotlib.pyplot as plt 
+# %matplotlib inline
+# %matplotlib qt5
 
 try:
     from cross_sections_calc import calc
@@ -71,11 +73,18 @@ def beam_vibration_plot():
     for tt in time_vec:
         plt.ylim(-L, L)
         y_vec = deflection(bar_vec,tt)
-        displacement = plt.plot(bar_vec, y_vec, color='blue', linestyle='dashed')[0]
-        brace = plt.plot((0,0,a),(0,-a,0),color='black', linestyle='solid')[0]
-        plt.title(f'Deflection at {tt:.3f} seconds')
-        ax.set_ylabel('Vertical displacement [mm]')
-        # ax.legend(handles=[displacement, brace])
+        displacement = plt.plot(bar_vec, y_vec, 
+                                color='blue', 
+                                linestyle='dashed',
+                                label='Beam')[0]
+        brace = plt.plot((0,0,a),(0,-a,0),
+                         color='black', 
+                         linestyle='solid',
+                         label='Brace')[0]
+        plt.title(f'Deflection at {tt:.5f} seconds')
+        plt.ylabel('Vertical displacement [mm]')
+        plt.xlabel('Horizontal displacement [mm]')
+        plt.legend()
         plt.show() # Matplotlibism for displaying plot 
     pass
 
